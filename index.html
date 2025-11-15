@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Para Você Keth — Um presente</title>
+  <style>
+    :root{--bg1:#111827;--bg2:#2b0b2f;--accent:#ff6fa3;--accent2:#ffd3e0;--glass:rgba(255,255,255,0.06)}
+    *{box-sizing:border-box;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial}
+    html,body{height:100%;margin:0;background:linear-gradient(135deg,var(--bg1),var(--bg2));color:#fff}
+    .wrap{min-height:100vh;display:flex;flex-direction:column;align-items:center;gap:28px;padding:48px 20px}
+
+    header{width:100%;max-width:1100px;display:flex;justify-content:space-between;align-items:center}
+    .logo{display:flex;gap:12px;align-items:center}
+    .logo .icon{width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#ffb7d2);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 24px rgba(0,0,0,0.6)}
+    .logo h1{font-size:18px;margin:0}
+
+    .card{width:100%;max-width:1100px;background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));border-radius:18px;padding:26px;backdrop-filter:blur(6px);box-shadow:0 10px 40px rgba(10,6,20,0.6)}
+
+    .hero{display:flex;gap:24px;align-items:center}
+    .hero .preview{width:48%;min-height:280px;border-radius:12px;overflow:hidden;position:relative}
+    .preview img{width:100%;height:100%;object-fit:cover;display:block;transform:scale(1);transition:transform .9s ease}
+    .preview:hover img{transform:scale(1.04)}
+    .hero .meta{flex:1}
+    .meta h2{margin:4px 0 12px 0;font-size:28px}
+    .meta p{margin:0 0 16px;color:var(--accent2)}
+
+    .buttons{display:flex;gap:10px}
+    .btn{padding:10px 16px;border-radius:10px;background:linear-gradient(90deg,var(--accent),#ffc0dc);border:0;color:#111;font-weight:700;cursor:pointer}
+    .btn.secondary{background:transparent;color:var(--accent2);border:1px solid rgba(255,255,255,0.06)}
+
+    .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:18px}
+    .thumb{position:relative;border-radius:12px;overflow:hidden;cursor:pointer}
+    .thumb img{width:100%;height:160px;object-fit:cover;display:block;transition:transform .3s}
+    .thumb:hover img{transform:scale(1.06)}
+    .thumb .tag{position:absolute;left:8px;bottom:8px;padding:6px 10px;border-radius:9px;background:var(--glass);font-size:12px}
+
+    .quotes{display:flex;flex-direction:column;gap:12px;margin-top:12px}
+    .quote{font-size:20px;font-style:italic;color:#ffeef6}
+
+    .controls{display:flex;gap:12px;align-items:center;margin-top:12px}
+    .play{display:flex;gap:12px;align-items:center}
+    .player{width:56px;height:56px;border-radius:999px;background:linear-gradient(135deg,#fff,#ffddee);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,0.5)}
+    .player svg{width:28px;height:28px}
+
+    footer{margin-top:18px;color:rgba(255,255,255,0.5);font-size:13px}
+
+    /* modal */
+    .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:linear-gradient(180deg,rgba(2,2,6,0.7),rgba(2,2,6,0.9));z-index:90}
+    .modal.show{display:flex}
+    .modal .box{max-width:920px;width:92%;max-height:92%;background:transparent;border-radius:12px;display:flex;flex-direction:column;align-items:center}
+    .modal img{max-width:100%;max-height:80vh;border-radius:12px}
+    .close{position:absolute;right:28px;top:28px;padding:10px;border-radius:10px;background:rgba(0,0,0,0.4);cursor:pointer}
+
+    /* animated hearts */
+    .hearts{position:fixed;right:20px;bottom:20px;pointer-events:none}
+    .hearts i{position:absolute;opacity:0;transform:translateY(0) scale(0.8);animation:rise 4s linear infinite}
+    @keyframes rise{0%{opacity:0;transform:translateY(0) scale(0.6)}10%{opacity:1}100%{opacity:0;transform:translateY(-420px) scale(1.4)}}
+
+    /* responsive */
+    @media (max-width:800px){
+      .hero{flex-direction:column}
+      .hero .preview{width:100%;height:220px}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="logo">
+        <div class="icon">❤</div>
+        <div>
+          <h1>Keth, com amor</h1>
+          <div style="font-size:12px;color:var(--accent2)">Um presente feito só pra ela</div>
+        </div>
+      </div>
+    </header>
+
+    <div class="card">
+      <section class="hero">
+        <div class="preview">
+          <img id="mainPhoto" src="img/IMG-20250804-WA0029.jpg" alt="Foto de vocês">
+        </div>
+        <div class="meta">
+          <h2>Para o meu <span style="color:var(--accent)">amorzinho</span></h2>
+          <p id="subtitle">Aqui estão nossas memórias — frases, fotos e a nossa música. (Sua musica preferida)</p>
+
+          <div class="buttons">
+            <button class="btn" id="openGallery">Ver fotos</button>
+            <button class="btn secondary" id="toggleLyrics">Mostrar frases</button>
+          </div>
+
+          <div class="controls">
+            <div class="play">
+                <iframe style="border-radius:12px" 
+                        src="https://open.spotify.com/embed/track/1VNWaY3uNfoeWqb5U8x2QX?utm_source=generator" 
+                        width="100%" height="152" frameborder="0" 
+                        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
+                </iframe>
+              <div style="font-size:13px;color:var(--accent2)">Música: <span id="songTitle">Nossa Canção</span></div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <section style="margin-top:18px">
+        <div class="gallery" id="gallery">
+          <div class="thumb" data-src="images/photo1.jpg"><img src="img/20251104_190911.jpg" alt=""></div>
+          <div class="thumb" data-src="images/photo2.jpg"><img src="img/IMG-20250616-WA0031.jpg" alt=""></div>
+          <div class="thumb" data-src="images/photo3.jpg"><img src="img/IMG-20250621-WA0046~2.jpg" alt=""></div>
+          <div class="thumb" data-src="images/photo4.jpg"><img src="img/IMG-20250917-WA0020.jpg" alt=""></div>
+        </div>
+
+        <div class="quotes" id="quotes" style="display:none">
+          <div class="quote" id="q1">"Você é meu lugar favorito no mundo."</div>
+          <div class="quote" id="q2">"Cada dia ao seu lado é meu melhor dia."</div>
+          <div class="quote" id="q3">"Amar você é a minha coisa favorita para sempre."</div>
+          <div class="quote" id="q3">"Eu te amo, Keth"</div>
+        </div>
+
+      </section>
+
+      <footer>
+      </footer>
+    </div>
+
+  </div>
+
+  <!-- modal -->
+  <div class="modal" id="modal">
+    <div class="close" id="closeModal">✕</div>
+    <div class="box"><img id="modalImg" src="" alt=""></div>
+  </div>
+
+  <!-- hearts -->
+  <div class="hearts" aria-hidden="true">
+    <i style="left:10px;animation-delay:0s">❤</i>
+    <i style="left:40px;animation-delay:1s">❤</i>
+    <i style="left:70px;animation-delay:2s">❤</i>
+  </div>
+
+  <!-- hidden audio element (troque por audio/song.mp3) -->
+  <audio id="song" src="audio/song.mp3" preload="auto"></audio>
+
+  <script>
+    // --- Basic interactivity ---
+    const gallery = document.getElementById('gallery');
+    const thumbs = Array.from(document.querySelectorAll('.thumb'));
+    const modal = document.getElementById('modal');
+    const modalImg = document.getElementById('modalImg');
+    const closeModal = document.getElementById('closeModal');
+    const mainPhoto = document.getElementById('mainPhoto');
+    const openGallery = document.getElementById('openGallery');
+    const quotes = document.getElementById('quotes');
+    const toggleLyrics = document.getElementById('toggleLyrics');
+    const playerBtn = document.getElementById('playerBtn');
+    const playerIcon = document.getElementById('playerIcon');
+    const song = document.getElementById('song');
+    const songTitle = document.getElementById('songTitle');
+
+    // allow keyboard ESC to close modal
+    document.addEventListener('keydown', e => { if(e.key === 'Escape') modal.classList.remove('show'); });
+
+    thumbs.forEach(t => t.addEventListener('click', e => {
+      const src = t.dataset.src;
+      modalImg.src = src; modal.classList.add('show');
+    }));
+    closeModal.addEventListener('click', () => modal.classList.remove('show'));
+    modal.addEventListener('click', e => { if(e.target === modal) modal.classList.remove('show'); });
+
+    openGallery.addEventListener('click', () => { window.scrollTo({top: document.getElementById('gallery').offsetTop - 20, behavior:'smooth'}); });
+
+    toggleLyrics.addEventListener('click', () => { quotes.style.display = quotes.style.display === 'none' ? 'block' : 'none' });
+
+    // Music controls
+    playerBtn.addEventListener('click', () => {
+      if(song.paused){ song.play(); showPause(); } else { song.pause(); showPlay(); }
+    });
+    function showPause(){ playerIcon.innerHTML = '<rect x="6" y="5" width="4" height="14"></rect><rect x="14" y="5" width="4" height="14"></rect>'; }
+    function showPlay(){ playerIcon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"></polygon>'; }
+
+    // update main preview when clicking thumbs
+    thumbs.forEach(t => t.addEventListener('click', () => mainPhoto.src = t.dataset.src));
+
+    // sample phrases auto-rotate
+    const frases = [
+      'Você é meu lugar favorito no mundo.',
+      'Cada dia ao seu lado é meu melhor dia.',
+      'Meu amor por você cresce a cada amanhecer.',
+      'Você torna as coisas simples em magia.'
+    ];
+    let fi = 0; setInterval(()=>{ document.getElementById('subtitle').textContent = frases[fi%frases.length]; fi++; }, 4000);
+
+    // accessibility: if audio file missing, disable player
+    song.addEventListener('error', ()=>{ playerBtn.style.opacity = 0.5; playerBtn.title = 'Música não encontrada: coloque audio/song.mp3'; });
+
+    // set song title from file name
+    function deriveTitleFromSrc(src){ if(!src) return 'Nossa Canção'; const s = src.split('/').pop(); return decodeURIComponent(s.replace(/[-_.]/g,' ')); }
+    songTitle.textContent = deriveTitleFromSrc(song.src);
+  </script>
+</body>
+</html>
